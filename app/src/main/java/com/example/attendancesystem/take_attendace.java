@@ -30,11 +30,11 @@ import java.util.List;
 
 public class take_attendace extends AppCompatActivity {
 
+    private FirestoreAdapter adapter1;
     private Spinner spinner;
     private EditText editText;
     private RecyclerView recyclerView;
     private ArrayList<YourModelClass> arrayList;
-    private view_student.FirestoreAdapter adapter;
     private FirebaseFirestore db;
     private String subjectWanted;
     String[] subjects = {"ooc", "java", "mes"};
@@ -47,17 +47,17 @@ public class take_attendace extends AppCompatActivity {
 
         spinner = findViewById(R.id.spinner2);
         editText = findViewById(R.id.editTextDate);
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView2);
 
 
         db = FirebaseFirestore.getInstance();
 
         arrayList = new ArrayList<>();
-        adapter = new view_student.FirestoreAdapter();
+        adapter1 = new FirestoreAdapter();
 
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter1);
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -95,7 +95,7 @@ public class take_attendace extends AppCompatActivity {
                         YourModelClass model = document.toObject(YourModelClass.class);
                         data.add(model);
                     }
-                    adapter.setData(data);
+                    adapter1.setData(data);
 
                 } else {
                     Log.d("Firestore", "Error getting documents: " + task.getException());
@@ -114,7 +114,7 @@ public class take_attendace extends AppCompatActivity {
             @NonNull
             @Override
             public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_student, parent, false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_attendance, parent, false);
                 return new ViewHolder(view);
             }
 
@@ -123,7 +123,7 @@ public class take_attendace extends AppCompatActivity {
                 YourModelClass item = data.get(position);
                 holder.username.setText(item.getUsername());
                 holder.usn.setText(item.getusn());
-                holder.semester.setEnabled(false);
+                //holder.semester.setEnabled(false);
             }
 
             @Override
@@ -138,8 +138,8 @@ public class take_attendace extends AppCompatActivity {
 
                 public ViewHolder(@NonNull View itemView) {
                     super(itemView);
-                    username = itemView.findViewById(R.id.username);
-                    usn = itemView.findViewById(R.id.usn);
+                    username = itemView.findViewById(R.id.username2);
+                    usn = itemView.findViewById(R.id.usn2);
                     //semester = itemView.findViewById(R.id.semester);
                 }
             }
