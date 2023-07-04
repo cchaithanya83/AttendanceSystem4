@@ -45,7 +45,7 @@ public class take_attendace extends AppCompatActivity {
     private ArrayList<YourModelClass> arrayList;
     private FirebaseFirestore db;
     private String subjectWanted;
-    String[] subjects = {"ooc", "java", "mes"};
+    String[] subjects = {"ooc", "java", "mes", "maths"};
     private CollectionReference collectionRef;
     String dates;
 
