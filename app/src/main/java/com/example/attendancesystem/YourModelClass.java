@@ -1,11 +1,15 @@
 package com.example.attendancesystem;
 
 
+import com.google.firebase.Timestamp;
+
+
 public class YourModelClass {
     private String username;
     private String usn;
     private String semester;
-
+    private Timestamp timestamp;
+    private String attendanceStatus;
 
 
     public YourModelClass() {
@@ -16,6 +20,8 @@ public class YourModelClass {
         this.username = username;
         this.usn = usn;
         this.semester = semester;
+        this.timestamp = timestamp;
+        this.attendanceStatus = attendanceStatus;
 
     }
 
@@ -27,6 +33,21 @@ public class YourModelClass {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+
+    public Timestamp gettimestamp() {
+        return timestamp;
+    }
+
+    public void settimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getattendanceStatus() {  return attendanceStatus;    }
+
+    public void setattendanceStatus(String attendanceStatus) {
+        this.attendanceStatus = attendanceStatus;
     }
 
     public String getusn() {

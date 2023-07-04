@@ -25,10 +25,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -178,45 +180,58 @@ public class take_attendace extends AppCompatActivity {
         data.put("subject",subjectWanted);
 
         CollectionReference studentCollection = db.collection("Student");
-        DocumentReference dateDocument = studentCollection.document("ATTENDACE");
+        Query query = studentCollection.whereEqualTo("username", username);
 
-        if (attendanceStatus == "Present") {
-            CollectionReference subjectCollection = dateDocument.collection(date.getText().toString());
-            DocumentReference usnDocument = subjectCollection.document();
-            usnDocument.set(data)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // Display a toast message to indicate successful update
-                            Toast.makeText(take_attendace.this, "Attendance updated successfully", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Display a toast message to indicate failure
-                            Toast.makeText(take_attendace.this, "Failed to update attendance", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else {
-            CollectionReference subjectCollection = dateDocument.collection(date.getText().toString());
-            DocumentReference usnDocument = subjectCollection.document();
-            usnDocument.set(data)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // Display a toast message to indicate successful update
-                            Toast.makeText(take_attendace.this, "Attendance updated successfully", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Display a toast message to indicate failure
-                            Toast.makeText(take_attendace.this, "Failed to update attendance", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    QuerySnapshot querySnapshot = task.getResult();
+                    if (!querySnapshot.isEmpty()) {
+                        // Retrieve the document ID
+                        DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                        String documentId = documentSnapshot.getId();
+                        DocumentReference dateDocument = studentCollection.document(documentId);
+                        CollectionReference studentCollection = dateDocument.collection("ATTENDACE");
+
+
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("attendanceStatus", attendanceStatus);
+
+                            data.put("timestamp", (FieldValue.serverTimestamp()));
+
+                        studentCollection.document().set(data)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // Update successful
+                                            Log.d("Firestore", "Attendance status and timestamp updated successfully");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Error occurred while updating
+                                            Log.d("Firestore", "Failed to update attendance status and timestamp: " + e.getMessage());
+                                        }
+                                    });
+
+
+
+                        // Use the dateDocument as needed
+                    } else {
+                        // No matching documents found
+                        Log.d("Firestore", "No matching documents found");
+                    }
+                } else {
+                    // Error occurred while querying the collection
+                    Log.d("Firestore", "Error querying documents: " + task.getException());
+                }
+            }
+        });
+
+
+
     }
 }
 
